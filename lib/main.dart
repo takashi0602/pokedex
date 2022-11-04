@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import './poke_list.dart';
 import './settings.dart';
+import 'models/pokemon.dart';
 import 'models/theme_mode.dart';
 import 'utils/theme_mode.dart';
 
@@ -11,10 +12,20 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final SharedPreferences pref = await SharedPreferences.getInstance();
   final themeModeNotifier = ThemeModeNotifier(pref);
-  runApp(ChangeNotifierProvider(
-    create: (context) => themeModeNotifier,
-    child: const MyApp(),
-  ));
+  final pokemonsNotifier = PokemonsNotifier();
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ThemeModeNotifier>(
+          create: (context) => themeModeNotifier,
+        ),
+        ChangeNotifierProvider<PokemonsNotifier>(
+          create: (context) => pokemonsNotifier,
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
