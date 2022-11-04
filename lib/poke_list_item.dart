@@ -1,43 +1,50 @@
 import 'package:flutter/material.dart';
 
 import './poke_detail.dart';
+import 'const/pokeApi.dart';
+import 'models/pokemon.dart';
 
 class PokeListItem extends StatelessWidget {
-  const PokeListItem({super.key, required this.index});
+  const PokeListItem({super.key, required this.poke});
 
-  final int index;
+  final Pokemon? poke;
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Container(
-        width: 80,
-        decoration: BoxDecoration(
-          color: Colors.yellow.withOpacity(.5),
-          borderRadius: BorderRadius.circular(10),
-          image: const DecorationImage(
-            fit: BoxFit.fitWidth,
-            image: NetworkImage(
-              "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png",
+    if (poke != null) {
+      return ListTile(
+        leading: Container(
+          width: 80,
+          decoration: BoxDecoration(
+            color: (pokeTypeColors[poke!.types.first] ?? Colors.grey[100])
+                ?.withOpacity(.3),
+            borderRadius: BorderRadius.circular(10),
+            image: DecorationImage(
+              fit: BoxFit.fitWidth,
+              image: NetworkImage(
+                poke!.imageUrl,
+              ),
             ),
           ),
         ),
-      ),
-      title: const Text(
-        'Pikachu',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-      ),
-      subtitle: const Text(
-        '⚡️electric',
-      ),
-      trailing: const Icon(Icons.navigate_next),
-      onTap: () => {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (BuildContext context) => const PokeDetail(),
-          ),
+        title: Text(
+          poke!.name,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-      },
-    );
+        subtitle: Text(poke!.types.first),
+        trailing: const Icon(Icons.navigate_next),
+        onTap: () => {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (BuildContext context) => PokeDetail(
+                poke: poke!,
+              ),
+            ),
+          ),
+        },
+      );
+    } else {
+      return const ListTile(title: Text('...'));
+    }
   }
 }
